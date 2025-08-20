@@ -7,7 +7,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # ================= CONFIG =================
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # apna BotFather ka token ENV var me daalo
+TOKEN = os.getenv("8232198206:AAHz2GHiKWQAcMKTF-Iz5Nl_Haatsi4ol_o")  # apna BotFather ka token ENV var me daalo
 # Mapping: command -> (Binance symbol, CoinGecko ID, Display Name)
 COINS = {
     "ton": ("TONUSDT", "the-open-network", "Toncoin"),
