@@ -1,13 +1,12 @@
 import asyncio
-import os
 from datetime import datetime, timezone
-
 import aiohttp
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # ================= CONFIG =================
-TOKEN = os.getenv("8232198206:AAHz2GHiKWQAcMKTF-Iz5Nl_Haatsi4ol_o")  # apna BotFather ka token ENV var me daalo
+TOKEN = "8232198206:AAHz2GHiKWQAcMKTF-Iz5Nl_Haatsi4ol_o"   # <-- yahan tumhara token fill hai
+
 # Mapping: command -> (Binance symbol, CoinGecko ID, Display Name)
 COINS = {
     "ton": ("TONUSDT", "the-open-network", "Toncoin"),
@@ -26,10 +25,6 @@ async def fetch_json(session: aiohttp.ClientSession, url: str, params: dict | No
 
 
 async def get_price(symbol: str, cg_id: str) -> dict:
-    """
-    Tries Binance first, then CoinGecko.
-    Returns dict like {"price": float, "source": str, "ts": datetime}
-    """
     async with aiohttp.ClientSession() as session:
         # Binance
         try:
@@ -68,8 +63,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# ============ HANDLERS ============
-
 def make_handler(cmd: str, symbol: str, cg_id: str, disp: str):
     async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
@@ -105,7 +98,6 @@ async def convert_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     coin = context.args[1].lower()
-
     if coin not in COINS:
         await update.message.reply_text(f"❌ Unsupported coin. Available: {', '.join(COINS.keys())}")
         return
@@ -126,16 +118,10 @@ async def convert_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Error: {e}")
 
 
-# ============ MAIN ============
-
 async def main():
-    if not TOKEN:
-        raise RuntimeError("Please set TELEGRAM_BOT_TOKEN environment variable")
-
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
 
-    # per-coin handlers
     for cmd, (symbol, cg_id, disp) in COINS.items():
         app.add_handler(CommandHandler(cmd, make_handler(cmd, symbol, cg_id, disp)))
 
