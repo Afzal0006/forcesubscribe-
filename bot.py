@@ -118,7 +118,7 @@ async def convert_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"Error: {e}")
 
 
-async def main():
+def main():
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
 
@@ -129,8 +129,8 @@ async def main():
     app.add_handler(CommandHandler("convert", convert_handler))
 
     print("Bot started...")
-    await app.run_polling(close_loop=False)
+    app.run_polling()
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
